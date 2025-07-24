@@ -1,0 +1,21 @@
+name: Trivy IaC Scan
+
+on:
+  push:
+    paths:
+      - '**/*.tf'
+
+jobs:
+  trivy-scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Scan Terraform files with Trivy
+        uses: aquasecurity/trivy-action@0.11.2
+        with:
+          scan-type: config
+          scan-ref: .
+
