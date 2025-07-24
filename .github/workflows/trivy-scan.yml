@@ -2,20 +2,27 @@ name: Trivy IaC Scan
 
 on:
   push:
-    paths:
-      - '**/*.tf'
+    branches: [ "main", "master" ]
 
 jobs:
   trivy-scan:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
-      - name: Scan Terraform files with Trivy
-        uses: aquasecurity/trivy-action@0.11.2
-        with:
-          scan-type: config
-          scan-ref: .
+    - name: Run Trivy on Terraform files and export report
+      uses: aquasecurity/trivy-action@0.11.2
+      with:
+        scan-type: config
+        scan-ref: .
+        format: sarif
+        output: trivy-report.sarif
+
+    - name: Upload Trivy SARIF report
+      uses: github/codeql-action/upload-sarif@v2
+      with:
+        sarif_file: trivy-report.sarif
+
 
