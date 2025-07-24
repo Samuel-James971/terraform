@@ -2,35 +2,19 @@ name: Trivy IaC Scan
 
 on:
   push:
-    branches: [ "main", "master" ]
-
-permissions:
-  contents: read
+    paths:
+      - '**/*.tf'
 
 jobs:
   trivy-scan:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    - name: Install Trivy CLI
-      run: |
-        sudo apt-get update
-        sudo apt-get install wget -y
-        wget https://github.com/aquasecurity/trivy/releases/latest/download/trivy_0.51.1_Linux-64bit.deb
-        sudo dpkg -i trivy_0.51.1_Linux-64bit.deb
-
-    - name: Run Trivy scan and save as table report
-      run: |
-        trivy config . --format table > trivy-results.txt
-      continue-on-error: true
-
-    - name: Upload Trivy scan results
-      uses: actions/upload-artifact@v4
-      with:
-        name: trivy-scan-report
-        path: trivy-results.txt
-
-
+      - name: Scan Terraform files with Trivy
+        uses: aquasecurity/trivy-action@0.11.2
+        with:
+          scan-type: config
+          scan-ref: .
