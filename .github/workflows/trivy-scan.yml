@@ -1,20 +1,25 @@
+# Name of the GitHub Actions workflow
 name: Trivy IaC Scan
 
+# Trigger this workflow on any push that affects .tf (Terraform) files
 on:
   push:
     paths:
-      - '**/*.tf'
+      - '**/*.tf'  # Match any Terraform file in the repository
 
 jobs:
-  trivy-scan:
-    runs-on: ubuntu-latest
+  trivy-scan:  # Name of the job
+    runs-on: ubuntu-latest  # Use the latest Ubuntu runner
 
     steps:
+      # Step 1: Checkout the repository so the workflow can access its contents
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      # Step 2: Scan Terraform files for misconfigurations using Trivy
       - name: Scan Terraform files with Trivy
-        uses: aquasecurity/trivy-action@0.11.2
+        uses: aquasecurity/trivy-action@0.11.2  # Use Trivy GitHub Action
         with:
-          scan-type: config
-          scan-ref: .
+          scan-type: config   # Specify the scan type for config/IaC files
+          scan-ref: .         # Scan the current directory (root of the repo)
+
